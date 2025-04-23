@@ -21,6 +21,8 @@ matplotlib.use('Agg')
 from datetime import datetime, timedelta
 from netCDF4 import Dataset
 import numpy as np
+import numpy.ma as ma
+from numpy import exp,where,ma,cos,sin,pi,amax,amin
 import pickle
 import os
 from scipy.interpolate import interp1d
