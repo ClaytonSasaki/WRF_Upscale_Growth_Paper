@@ -1,4 +1,5 @@
 # WRF_Upscale_Growth_Paper
+[![DOI](https://zenodo.org/badge/971111604.svg)](https://doi.org/10.5281/zenodo.15272276)
 
 Repository for the code used in the following paper: Sasaki, C. R. S., Rowe, A. K., McMurdie, L. A., Varble, A. C., & Zhang, Z. (2025), Environmental Influences on Deep Convective Upscale Growth Rate in Central Argentina from a Convection-Permitting Simulation. Submitted to J. Geophys. Res. Atmos.
 
