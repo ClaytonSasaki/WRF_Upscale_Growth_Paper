@@ -27,6 +27,9 @@ MCS_type = 'all_MCS'               # Options: 'all_MCS', 'robustMCS'
 MCS_init_area = 'large_area1'      # Choose region for MCS initiation
 env_offset_MCS = False
 
+SALLJ_search_area = '2deg4degOffset1degNFromCentroid' # '2deg4degOffset1degNFromCentroid', '1deg3degBottomCentroid', '60-65W28-30SFixed'
+env_search_area = '2.00fromMCScentroid' # '0.75fromMCScentroid', '2.00fromMCScentroid'
+
 seperate_by_growth_rate = True
 
 plot_rapid_growth_dist = False
@@ -98,6 +101,10 @@ MCS_centroid_elevation = np.array(MCS_centroid_elevation)[events_bool]
 MCS_ccs_area_growth_filtered = np.array(MCS_ccs_area_growth_filtered)[events_bool]
 MCS_growth_stage_time_length_filtered = np.array(MCS_growth_stage_time_length_filtered)[events_bool]
 
+MCS_centroid_elevation = MCS_centroid_elevation[MCS_growth_stage_time_length_filtered > 0]
+MCS_ccs_area_growth_filtered = MCS_ccs_area_growth_filtered[MCS_growth_stage_time_length_filtered > 0]
+MCS_growth_stage_time_length_filtered = MCS_growth_stage_time_length_filtered[MCS_growth_stage_time_length_filtered > 0]
+
 MCS_ccs_area_growth_rate_filtered = MCS_ccs_area_growth_filtered/MCS_growth_stage_time_length_filtered
 median_MCS_ccs_area_growth_rate_filtered = np.nanmedian(MCS_ccs_area_growth_rate_filtered)
 
@@ -150,11 +157,17 @@ if seperate_by_growth_rate == True:
 
     print('# slow growth MCS', len(MCS_ccs_area_growth_rate_filtered_mask2))
 
-    data_all_growth = MCS_ccs_area_growth_rate_filtered
-    data_rapid_growth = MCS_ccs_area_growth_rate_filtered_mask1
-    data_slow_growth = MCS_ccs_area_growth_rate_filtered_mask2
-    variable_name = 'MCS_ccs_area_growth_rate_filtered' # MCS_prop_area_SALLJ, MCS_0_3km_shear, MCS_q_850, MCS_growth_stage_time_length_filtered, MCS_ccs_area_growth_rate_filtered 
-    x_label = 'MCS ccs area growth rate (km^2/hr)' # proportion of area w/SALLJ, bulk 0-3 km shear, 850-hPa q, 'growth time (hrs)', 'MCS ccs area growth rate (km^2/hr)'
+    data_all_growth = MCS_growth_stage_time_length_filtered
+    print(data_all_growth)
+    data_rapid_growth = MCS_growth_stage_time_length_filtered_mask1
+    data_slow_growth = MCS_growth_stage_time_length_filtered_mask2
+    variable_name = 'MCS_growth_stage_time_length_filtered' # MCS_prop_area_SALLJ, MCS_0_3km_shear, MCS_q_850, MCS_growth_stage_time_length_filtered, MCS_ccs_area_growth_rate_filtered 
+    x_label = 'growth time (h)' # proportion of area w/SALLJ, bulk 0-3 km shear, 850-hPa q, 'growth time (h)', r'CCS area growth rate ($km^2/h$)'
+    units = 'h'
+    
+    bins = np.arange(0.25,5.0,0.5) # MCS_ccs_area_growth_rate_filtered: 30, MCS_growth_stage_time_length_filtered: np.arange(0.25,4.75,0.5)
+    
+    rwidth = 0.25 # MCS_ccs_area_growth_rate_filtered: 1.0, MCS_growth_stage_time_length_filtered: 0.25
 
     fig, ax = plt.subplots()
 
@@ -162,8 +175,8 @@ if seperate_by_growth_rate == True:
 
         median_value = np.nanmedian(data_all_growth)
         dist_text_all_growth = '_all'   
-        plt.hist(data_all_growth, bins=30, alpha=0.3, density=False, label='all MCS', color='gray')
-        plt.axvline(median_value, color='gray', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
+        plt.hist(data_all_growth, bins=bins, alpha=0.3, density=False, rwidth=rwidth, label='all MCS', color='gray')
+        plt.axvline(median_value, color='gray', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f} %s' %(units))
 
     else:
         dist_text_all_growth = ''
@@ -172,8 +185,8 @@ if seperate_by_growth_rate == True:
 
         median_value = np.nanmedian(data_rapid_growth)
         dist_text_rapid_growth = '_rapid'   
-        plt.hist(data_rapid_growth, bins=30, alpha=0.3, density=False, label='rapid growth MCS', color='blue')
-        plt.axvline(median_value, color='blue', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
+        plt.hist(data_rapid_growth, bins=bins, alpha=0.3, density=False, rwidth=rwidth, label='rapid growth MCS', color='blue')
+        plt.axvline(median_value, color='blue', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f} %s' %(units))
 
     else:
         dist_text_rapid_growth = ''
@@ -182,8 +195,8 @@ if seperate_by_growth_rate == True:
 
         median_value = np.nanmedian(data_slow_growth)
         dist_text_slow_growth = '_slow'
-        plt.hist(data_slow_growth, bins=30, alpha=0.3, density=False, label='slow growth MCS', color='red')
-        plt.axvline(median_value, color='red', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
+        plt.hist(data_slow_growth, bins=bins, alpha=0.3, density=False, rwidth=rwidth, label='slow growth MCS', color='red')
+        plt.axvline(median_value, color='red', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f} %s' %(units))
 
     else:
         dist_text_slow_growth = ''
@@ -193,7 +206,7 @@ elif seperate_by_elevation == True:
     
     var = MCS_ccs_area_growth_rate_filtered # MCS_growth_stage_time_length_filtered, MCS_ccs_area_growth_rate_filtered
     variable_name = 'MCS_ccs_area_growth_rate_filtered' # MCS_growth_stage_time_length_filtered, MCS_ccs_area_growth_rate_filtered
-    x_label = 'MCS ccs area growth rate (km^2/hr)' # 'growth time (hrs)', 'MCS ccs area growth rate (km^2/hr)'
+    x_label = r'CCS area growth rate ($km^2/h$)' # 'growth time (h)', r'CCS area growth rate ($km^2/h$)'
     
     fig, ax = plt.subplots()
     
@@ -206,7 +219,7 @@ elif seperate_by_elevation == True:
     plt.hist(var_less500m, bins=30, alpha=0.3, density=False, label='<500 m', color='#0504aa')
     
     median_value = np.nanmedian(var_less500m)
-    plt.axvline(median_value, color='#0504aa', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
+    plt.axvline(median_value, color='#0504aa', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f} %s' %(units))
     
     condition_elevation = MCS_centroid_elevation >= 450
 
@@ -217,11 +230,11 @@ elif seperate_by_elevation == True:
     plt.hist(var_grt500m, bins=30, alpha=0.3, density=False, label='>=500 m', color='red')
     
     median_value = np.nanmedian(var_grt500m)
-    plt.axvline(median_value, color='red', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
+    plt.axvline(median_value, color='red', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f} %s' %(units))
 
 # Adding labels and title
 plt.xlabel(x_label)
-plt.ylabel('Frequency')
+plt.ylabel('Count')
 
 # Show legend
 plt.legend()
@@ -234,7 +247,7 @@ specific_outpath = '%sarea_%s%s%s/plots/' %(MCS_file_label, MCS_init_area, SALLJ
 
 if seperate_by_growth_rate == True:
 
-    plt.savefig(general_path + specific_outpath + '%s_hist%s%s%s_growth%s.png' %(variable_name, dist_text_all_growth, dist_text_rapid_growth, dist_text_slow_growth, filter_label), dpi=200)
+    plt.savefig(general_path + specific_outpath + '%s_hist%s%s%s_growth%s_revision1.png' %(variable_name, dist_text_all_growth, dist_text_rapid_growth, dist_text_slow_growth, filter_label), dpi=200)
     
 elif seperate_by_elevation == True:
     
