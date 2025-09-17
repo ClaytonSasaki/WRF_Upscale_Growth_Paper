@@ -212,7 +212,7 @@ distances = distances[distances !=0]
 
 data = [distances,distances_less500m,distances_grt500m]
 
-label_list = ['All', '<500m AGL', '>=500m AGL']
+label_list = ['All', '<500m MSL', '>=500m MSL']
 
 color_list = ['gray', '#0504aa', 'red']
 
@@ -220,13 +220,14 @@ for i in range(len(data)):
     axs[i].hist(x=data[i], bins=np.arange(0,261,20), color=color_list[i], alpha=0.7, label=label_list[i])
     
     median_val = np.nanmedian(data[i])
-    axs[i].axvline(median_val, color=color_list[i], linestyle='dashed', linewidth=2, label=f'Median: {median_val:.0f}')
+    axs[i].axvline(median_val, color=color_list[i], linestyle='dashed', linewidth=2, label=f'Median: {median_val:.0f} km')
     
     axs[i].legend()
     
     axs[i].set_ylim([0,30])
     axs[i].set_yticks([0,10,20,30])
     axs[i].set_yticklabels([0,10,20,30])
+    axs[i].grid(which='major', axis='both', linestyle='--', linewidth=0.7, color='lightgray', alpha=0.7)
     
 axs[-1].set_xlabel('Distance between first storms and MCSinit (km)')
 axs[-1].set_ylabel('Counts')
@@ -235,7 +236,7 @@ outpath = MCSinit_path
 
 plt.tight_layout()
 
-plt.savefig(outpath + '/%s%s_hist_distance_MCSfirstStorms_MCSinit_%s%s.png' %(MCS_file_label, offset_label, MCS_init_area, events_removed_label), dpi=600)
+plt.savefig(outpath + '/%s%s_hist_distance_MCSfirstStorms_MCSinit_%s%s_revision1.png' %(MCS_file_label, offset_label, MCS_init_area, events_removed_label), dpi=600)
 
 print('saved')
 
