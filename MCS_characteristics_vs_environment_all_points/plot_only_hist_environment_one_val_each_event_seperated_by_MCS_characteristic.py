@@ -36,6 +36,8 @@ plot_rapid_growth_dist = False
 plot_slow_growth_dist = False
 plot_all_growth_dist = True
 
+remove_undefined_growth_rate = True
+
 ##############################################################################
 
 # get corresponding file labels using chosen inputs
@@ -168,13 +170,24 @@ x_label = 'refl coverage (dBZ > 30) by event' # 850hPa q spread by event
 
 ################################################## 
 
+# ---------- removes cases with undefined growth rate because they are MCS when they are first tracked ----------
+
+if remove_undefined_growth_rate == True:
+    
+    data_all_growth = np.delete(data_all_growth, np.array([29, 53, 80, 89, 109, 110, 120, 127, 141]))
+    
+#    # Calculate growth rate
+#    MCS_ccs_area_growth_rate_filtered = MCS_ccs_area_growth_filtered_spreadByEvent/MCS_growth_stage_time_length_filtered
+#    
+#    data_all_growth= data_all_growth[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+
 fig, ax = plt.subplots()
 
 if plot_all_growth_dist == True:
     
     median_value = np.nanmedian(data_all_growth)
     dist_text_all_growth = '_all'   
-    plt.hist(data_all_growth, bins=30, alpha=0.3, label='all MCS', color='gray')
+    plt.hist(data_all_growth, bins=30, alpha=0.3, density=False, label='all MCS', color='gray')
     plt.axvline(median_value, color='gray', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
 
 else:
@@ -184,7 +197,7 @@ if plot_rapid_growth_dist == True:
     
     median_value = np.nanmedian(data_rapid_growth)
     dist_text_rapid_growth = '_rapid'   
-    plt.hist(data_rapid_growth, bins=30, alpha=0.3, label='rapid growth MCS', color='blue')
+    plt.hist(data_rapid_growth, bins=30, alpha=0.3, density=False, label='rapid growth MCS', color='blue')
     plt.axvline(median_value, color='blue', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
     
 else:
@@ -194,7 +207,7 @@ if plot_slow_growth_dist == True:
     
     median_value = np.nanmedian(data_slow_growth)
     dist_text_slow_growth = '_slow'
-    plt.hist(data_slow_growth, bins=30, alpha=0.3, label='slow growth MCS', color='red')
+    plt.hist(data_slow_growth, bins=30, alpha=0.3, density=False, label='slow growth MCS', color='red')
     plt.axvline(median_value, color='red', linestyle='dashed', linewidth=2, label=f'Median: {median_value:.2f}')
     
 else:
@@ -202,7 +215,7 @@ else:
 
 # Adding labels and title
 plt.xlabel(x_label)
-plt.ylabel('Frequency')
+plt.ylabel('Count')
 
 # Show legend
 plt.legend()
@@ -213,7 +226,7 @@ print('saving')
 
 specific_outpath = '%sarea_%s%s%s/plots/' %(MCS_file_label, MCS_init_area, SALLJ_search_text, env_search_text)
 
-plt.savefig(general_path + specific_outpath + '%s_hist_by_%s_%d%s%s%s%s.png' %(variable_name, var_seperation_name, seperation_threshold, dist_text_all_growth, dist_text_rapid_growth, dist_text_slow_growth, filter_label), dpi=200)
+plt.savefig(general_path + specific_outpath + '%s_hist_by_%s_%d%s%s%s%s_revision1.png' %(variable_name, var_seperation_name, seperation_threshold, dist_text_all_growth, dist_text_rapid_growth, dist_text_slow_growth, filter_label), dpi=200)
 
 print('saved')
     
