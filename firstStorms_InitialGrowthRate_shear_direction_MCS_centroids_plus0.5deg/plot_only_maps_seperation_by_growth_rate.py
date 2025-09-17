@@ -218,18 +218,20 @@ else: # seperation_plot == False
     axs.scatter(MCS_center_lons_initiation_filtered_mask, MCS_center_lats_initiation_filtered_mask, transform=crs.PlateCarree(), color='black', marker='*', zorder=7, s=1600)
     
     var_seperation_label = ''
+    
+print()
 
-print('# of MCS', len(MCS_center_lons_initiation_filtered))
+print('# of MCS', (~np.isnan(MCS_ccs_area_growth_rate_filtered)).sum())
 
 # ---------- plot number of MCS  ----------
 
-plt.text(.01, .99, 'n = %d' %(len(MCS_center_lons_initiation_filtered)), ha='left', va='top', transform=axs.transAxes, fontsize=35)
+plt.text(.01, .99, 'n = %d' %((~np.isnan(MCS_ccs_area_growth_rate_filtered)).sum()), ha='left', va='top', transform=axs.transAxes, fontsize=35)
 
 general_outpath = '/home/disk/meso-home/crs326/Documents/Research/WRF_Upscale_Growth_Paper/firstStorms_InitialGrowthRate_shear_direction_MCS_centroids_plus0.5deg'
 
 specific_outpath = '/data/'
 
-plt.savefig(general_outpath + '/%s%s%s_initCentroids_%s%s.png' %(MCS_file_label, offset_label, var_seperation_label, MCS_init_area, events_removed_label), dpi=600)
+plt.savefig(general_outpath + '/%s%s%s_initCentroids_%s%s_revision1.png' %(MCS_file_label, offset_label, var_seperation_label, MCS_init_area, events_removed_label), dpi=600)
 
 print('saved')
 
