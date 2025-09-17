@@ -38,6 +38,7 @@ plot_dir_shear_label = False       # Label shear direction (optional)
 shear_type = '0-3km'               # Shear depth (e.g., '0-3km')
 events_removed = True              # Whether to exclude certain MCS events
 plot_tracks = True                # Whether to draw lines connecting first storms to MCS init locations
+remove_undefined_growth_rate = True # Whether to remove the cases where the growth rate is undefined because the first tracked location is the same as the MCS init location 
 
 # ----------------------------------------------------------
 
@@ -226,6 +227,18 @@ axs.scatter(-64.19, -31.44, s=400, color='red', transform=crs.PlateCarree(), zor
 
 wrf_ncfile.close()
 
+# ---------- removes cases with undefined growth rate because they are MCS when they are first tracked ----------
+
+if remove_undefined_growth_rate == True:
+    
+    MCSinit_center_lons_initiation_filtered= MCSinit_center_lons_initiation_filtered[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+    MCSinit_center_lats_initiation_filtered= MCSinit_center_lats_initiation_filtered[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+    MCSinit_dir_shear_chosen_layer= MCSinit_dir_shear_chosen_layer[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+    
+    MCSfirstStorms_center_lons_initiation_filtered = MCSfirstStorms_center_lons_initiation_filtered[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+    MCSfirstStorms_center_lats_initiation_filtered = MCSfirstStorms_center_lats_initiation_filtered[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+    MCSfirstStorms_dir_shear_chosen_layer = MCSfirstStorms_dir_shear_chosen_layer[~np.isnan(MCS_ccs_area_growth_rate_filtered)]
+
 # ---------- plot centroids + colored by wind shear direction, if chosen ----------
 
 if seperation_plot == True:
@@ -317,7 +330,7 @@ plt.text(.01, .99, 'n = %d' %(len(MCSinit_center_lons_initiation_filtered_mask))
 
 general_outpath = '/home/disk/meso-home/crs326/Documents/Research/WRF_Upscale_Growth_Paper/MCSinit_InitialGrowthRate_shear_direction_MCS_centroids_plus0.5deg'
 
-plt.savefig(general_outpath + '/%s%s%s_MCSfirstStorms_MCSinitCentroids%s_%s_%s%s%s.png' %(MCS_file_label, offset_label, var_seperation_label, tracks_label, shear_type, MCS_init_area, dir_shear_label, events_removed_label), dpi=600)
+plt.savefig(general_outpath + '/%s%s%s_MCSfirstStorms_MCSinitCentroids%s_%s_%s%s%s_revision1.png' %(MCS_file_label, offset_label, var_seperation_label, tracks_label, shear_type, MCS_init_area, dir_shear_label, events_removed_label), dpi=600)
 
 print('saved')
 
